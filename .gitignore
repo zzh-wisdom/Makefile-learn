@@ -1,4 +1,7 @@
-*.o
-main
+# ide
+.vscode
 
+# dir
 bin
+dep
+obj

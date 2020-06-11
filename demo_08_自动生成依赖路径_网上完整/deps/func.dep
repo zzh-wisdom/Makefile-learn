@@ -1,0 +1,1 @@
+objs/func.o deps/func.dep: func.c func.h define.h
