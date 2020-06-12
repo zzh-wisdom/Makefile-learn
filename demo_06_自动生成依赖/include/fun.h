@@ -1,5 +1,5 @@
-#ifndef FUN.H
-#define FUN.H
+#ifndef FUN_H
+#define FUN_H
 
 int MaxInt(int a, int b);
 

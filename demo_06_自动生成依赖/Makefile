@@ -28,7 +28,7 @@ DEPS := $(subst $(DIR_SRC),$(DIR_DEP),$(DEPS))    # 将生成的.d文件均放�
 EXE := main   #可执行文件
 EXE := $(addprefix $(DIR_BIN)/,$(EXE))  # 添加路径前缀，使得生成的可执行文件都放到bin目录下
 
-
+# make all 先创建目录obj和bin，再生成可执行文件
 all : $(DIR_OBJ) $(DIR_BIN) $(EXE)
 
 ifeq ("$(MAKECMDGOALS)","all")    # MAKECMDGOALS表示当前make命令生成的目标，若执行命令为"make"或者“make all”则包含“-include $(DEPS)”
@@ -43,6 +43,7 @@ $(EXE) : $(OBJS)
 	$(CC) -o $@ $^
 	@echo "Success! Target => $@"
 
+# 模式规则，产生.o文件
 $(DIR_OBJ)/%.o : $(DIR_SRC)/%.c
 	@#@echo $^  # 这里打印的依赖文件包含头文件.h，有点神奇
 	$(CC) $(INCLUDES) -o $@ -c $(filter $(DIR_SRC)/%.c, $^)    
@@ -50,12 +51,14 @@ $(DIR_OBJ)/%.o : $(DIR_SRC)/%.c
 $(DIRS) :
 	$(MKDIR) $@
 
+# 模式规则，产生.d文件
 ifeq ("$(wildcard $(DIR_DEP))","")   # 根据是否含有dep文件夹，进行创建
 $(DIR_DEP)/%.d : $(DIR_DEP) $(DIR_SRC)/%.c
 else
 $(DIR_DEP)/%.d : $(DIR_SRC)/%.c
 endif
 	@echo "Creating $@ ..."
+	@# sed命令：sed是一个流编辑器，用于流文本的修改（增/删/改/查)，sed的字符串替换方式为：sed 's:src:des:g'，在sed中可以用正则表达式匹配替换目标。
 	@set -e;\
 	$(CC) -MM $(INCLUDES) $(filter %.c,$^) | sed 's,\(.*\)\.o[ :]*,$(DIR_OBJ)/\1.o $@: ,g' > $@
 
